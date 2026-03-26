@@ -17,11 +17,12 @@ import {
   Tags,
   BookOpen,
   ChevronRight,
-  Bot,
   Sparkles,
   Workflow,
 } from "lucide-react";
 import { useState } from "react";
+import { cn } from "@/lib/utils";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface NavItem {
   label: string;
@@ -100,96 +101,95 @@ export function Sidebar() {
   };
 
   return (
-    <aside className="flex h-full w-[240px] flex-col border-r border-separator bg-surface">
+    <aside className="flex h-full w-[240px] shrink-0 flex-col rounded-xl bg-white">
       {/* Brand */}
-      <div className="flex items-center gap-2.5 px-4 py-4 border-b border-separator">
-        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-accent">
-          <Bot className="h-4.5 w-4.5 text-accent-foreground" />
-        </div>
-        <div className="flex flex-col">
-          <span className="text-sm font-semibold text-foreground">Partner Portal</span>
-          <span className="text-xs text-muted">AI Agent Builder</span>
-        </div>
+      <div className="px-5 pt-5 pb-4">
+        <p className="text-[15px] font-semibold tracking-tight">Partner Portal</p>
+        <p className="text-[12px] text-muted-foreground mt-0.5">AI Agent Builder</p>
       </div>
 
       {/* Main nav */}
-      <nav className="flex-1 overflow-y-auto px-3 py-3">
-        <ul className="space-y-0.5">
-          {navItems.map((item) => (
-            <li key={item.label}>
-              {item.children ? (
-                <>
-                  <button
-                    onClick={() => toggleSection(item.label)}
-                    className={`flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm font-medium transition-colors hover:bg-default ${
-                      isActive(item.href)
-                        ? "text-accent"
-                        : "text-foreground"
-                    }`}
+      <ScrollArea className="flex-1">
+        <nav className="px-3 pt-1 pb-3">
+          <ul className="space-y-0.5">
+            {navItems.map((item) => (
+              <li key={item.label}>
+                {item.children ? (
+                  <>
+                    <button
+                      onClick={() => toggleSection(item.label)}
+                      className={cn(
+                        "flex w-full items-center gap-2.5 rounded-lg px-3 py-[7px] text-[13px] font-medium transition-colors hover:bg-accent",
+                        isActive(item.href) && "text-foreground"
+                      )}
+                    >
+                      <item.icon className="h-[16px] w-[16px] shrink-0 text-muted-foreground" />
+                      <span className="flex-1 text-left">{item.label}</span>
+                      <ChevronRight
+                        className={cn(
+                          "h-3.5 w-3.5 text-muted-foreground/60 transition-transform duration-150",
+                          expandedSections.includes(item.label) && "rotate-90"
+                        )}
+                      />
+                    </button>
+                    {expandedSections.includes(item.label) && (
+                      <ul className="mt-0.5 space-y-0.5">
+                        {item.children.map((child) => {
+                          const childActive =
+                            child.href === item.href
+                              ? pathname === item.href
+                              : isActive(child.href);
+                          return (
+                            <li key={child.href}>
+                              <Link
+                                href={child.href}
+                                className={cn(
+                                  "flex items-center gap-2.5 rounded-lg py-[6px] pl-8 pr-3 text-[13px] transition-colors hover:bg-accent",
+                                  childActive
+                                    ? "bg-accent font-medium text-foreground"
+                                    : "text-muted-foreground"
+                                )}
+                              >
+                                <child.icon className="h-[15px] w-[15px] shrink-0" />
+                                <span>{child.label}</span>
+                              </Link>
+                            </li>
+                          );
+                        })}
+                      </ul>
+                    )}
+                  </>
+                ) : (
+                  <Link
+                    href={item.href}
+                    className={cn(
+                      "flex items-center gap-2.5 rounded-lg px-3 py-[7px] text-[13px] font-medium transition-colors hover:bg-accent",
+                      isActive(item.href) ? "bg-accent text-foreground" : "text-muted-foreground"
+                    )}
                   >
-                    <item.icon className="h-4 w-4 shrink-0" />
-                    <span className="flex-1 text-left">{item.label}</span>
-                    <ChevronRight
-                      className={`h-3.5 w-3.5 text-muted transition-transform ${
-                        expandedSections.includes(item.label) ? "rotate-90" : ""
-                      }`}
-                    />
-                  </button>
-                  {expandedSections.includes(item.label) && (
-                    <ul className="mt-0.5 space-y-0.5 pl-4">
-                      {item.children.map((child) => (
-                        <li key={child.href}>
-                          <Link
-                            href={child.href}
-                            className={`flex items-center gap-2.5 rounded-lg px-2.5 py-1.5 text-sm transition-colors hover:bg-default ${
-                              isActive(child.href) &&
-                              (child.href === item.href
-                                ? pathname === item.href
-                                : true)
-                                ? "bg-default text-accent font-medium"
-                                : "text-muted"
-                            }`}
-                          >
-                            <child.icon className="h-3.5 w-3.5 shrink-0" />
-                            <span>{child.label}</span>
-                          </Link>
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                </>
-              ) : (
-                <Link
-                  href={item.href}
-                  className={`flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm font-medium transition-colors hover:bg-default ${
-                    isActive(item.href)
-                      ? "bg-default text-accent"
-                      : "text-foreground"
-                  }`}
-                >
-                  <item.icon className="h-4 w-4 shrink-0" />
-                  <span>{item.label}</span>
-                </Link>
-              )}
-            </li>
-          ))}
-        </ul>
-      </nav>
+                    <item.icon className="h-[16px] w-[16px] shrink-0" />
+                    <span>{item.label}</span>
+                  </Link>
+                )}
+              </li>
+            ))}
+          </ul>
+        </nav>
+      </ScrollArea>
 
       {/* Bottom nav */}
-      <div className="border-t border-separator px-3 py-3">
+      <div className="border-t border-border/40 px-3 py-3">
         <ul className="space-y-0.5">
           {bottomItems.map((item) => (
             <li key={item.label}>
               <Link
                 href={item.href}
-                className={`flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm font-medium transition-colors hover:bg-default ${
-                  isActive(item.href)
-                    ? "bg-default text-accent"
-                    : "text-foreground"
-                }`}
+                className={cn(
+                  "flex items-center gap-2.5 rounded-lg px-3 py-[7px] text-[13px] font-medium transition-colors hover:bg-accent",
+                  isActive(item.href) ? "bg-accent text-foreground" : "text-muted-foreground"
+                )}
               >
-                <item.icon className="h-4 w-4 shrink-0" />
+                <item.icon className="h-[16px] w-[16px] shrink-0" />
                 <span>{item.label}</span>
               </Link>
             </li>
