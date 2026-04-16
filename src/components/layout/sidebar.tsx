@@ -1,7 +1,4 @@
-"use client";
-
-import { usePathname } from "next/navigation";
-import Link from "next/link";
+import { useLocation, Link } from "@tanstack/react-router";
 import {
   Settings2,
   FlaskConical,
@@ -76,7 +73,8 @@ const bottomItems: NavItem[] = [
 ];
 
 export function Sidebar() {
-  const pathname = usePathname();
+  const location = useLocation();
+  const pathname = location.pathname;
   const [expandedSections, setExpandedSections] = useState<string[]>(["Train", "Configure"]);
 
   const toggleSection = (label: string) => {
@@ -138,7 +136,7 @@ export function Sidebar() {
                                 )}
                               />
                               <Link
-                                href={child.href}
+                                to={child.href}
                                 className={cn(
                                   "block py-[5px] px-3 ml-1.5 text-[13px] transition-colors hover:bg-accent rounded-lg",
                                   childActive
@@ -156,7 +154,7 @@ export function Sidebar() {
                   </>
                 ) : (
                   <Link
-                    href={item.href}
+                    to={item.href}
                     className={cn(
                       "flex items-center gap-2.5 rounded-lg px-3 py-[7px] text-[13px] font-medium transition-colors hover:bg-accent",
                       isActive(item.href) ? "bg-accent text-foreground" : "text-muted-foreground"
@@ -178,7 +176,7 @@ export function Sidebar() {
           {bottomItems.map((item) => (
             <li key={item.label}>
               <Link
-                href={item.href}
+                to={item.href}
                 className={cn(
                   "flex items-center gap-2.5 rounded-lg px-3 py-[7px] text-[13px] font-medium transition-colors hover:bg-accent",
                   isActive(item.href) ? "bg-accent text-foreground" : "text-muted-foreground"
